@@ -1502,7 +1502,7 @@ end
   end
   if matches[1] == "rules" then
  if not data[tostring(chat)]['rules'] then
-     rules = "ℹ️ The Default Rules :\n1⃣ No Flood.\n2⃣ No Spam.\n3⃣ No Advertising.\n4⃣ Try to stay on topic.\n5⃣ Forbidden any racist, sexual, homophobic or gore content.\n➡️ Repeated failure to comply with these rules will cause ban.\n@BeyondTeam"
+     rules = "ℹ️ The Default Rules :\n1⃣ No Flood.\n2⃣ No Spam.\n3⃣ No Advertising.\n4⃣ Try to stay on topic.\n5⃣ Forbidden any racist, sexual, homophobic or gore content.\n➡️ Repeated failure to comply with these rules will cause ban.\n@Sohiw"
         else
      rules = "*Group Rules :*\n"..data[tostring(chat)]['rules']
       end
@@ -1609,7 +1609,7 @@ end
 
 if matches[1] == "help" and is_mod(msg) then
 text = [[
-*Beyond Bot Commands:*
+*Sohi Bot Commands:*
 
 *!setowner* `[username|id|reply]` 
 _Set Group Owner(Multi Owner)_
@@ -1758,4 +1758,3 @@ patterns ={
 },
 run=run
 }
---end groupmanager.lua #beyond team#
