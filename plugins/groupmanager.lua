@@ -2390,7 +2390,8 @@ local hash = "gp_lang:"..msg.chat_id_
 local lang = redis:get(hash)
 if not lang then
 local text = "*Group Info :*\n_Admin Count :_ *"..data.administrator_count_.."*\n_Member Count :_ *"..data.member_count_.."*\n_Kicked Count :_ *"..data.kicked_count_.."*\n_Group ID :_ *"..data.channel_.id_.."*"
-else
+return text
+			else
 local text = "*اطلاعات گروه :*\n_تعداد مدیران :_ *"..data.administrator_count_.."*\n_تعداد اعضا :_ *"..data.member_count_.."*\n_تعداد اعضای حذف شده :_ *"..data.kicked_count_.."*\n_شناسه گروه :_ *"..data.channel_.id_.."*"
 print(serpent.block(data))
         tdcli.sendMessage(arg.chat_id, arg.msg_id, 1, text, 1, 'md')
