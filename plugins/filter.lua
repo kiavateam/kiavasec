@@ -28,7 +28,7 @@ end
 local function clear_badwords(msg, var_name) 
 	local hash = get_badword_hash(msg)
 	redis:del(hash, var_name)
-	return 'بای بای'
+	return "*liSt Filter has been deleted*"
 end
 
 local function list_badword2(msg, arg)
@@ -52,7 +52,7 @@ end
 local function clear_badword(msg, cmd_name)  
 	local hash = get_badword_hash(msg)
 	redis:hdel(hash, cmd_name)
-	return "*Has Been Deleted*" ..cmd_name
+	return "*Has Been Deleted* \n" ..cmd_name
 end
 
 local function pre_process(msg)
