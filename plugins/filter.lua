@@ -15,7 +15,7 @@ local function list_badwords(msg)
 		local names = redis:hkeys(hash)
 		local text = "*Filter List*:\n\n"
 		for i=1, #names do
-			result = result..'سلام '..names[i]..'\n'
+			result = result..'❌ '..names[i]..'\n'
 		end
 		if #result>0 then
 			return text..result
