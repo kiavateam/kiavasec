@@ -1,7 +1,7 @@
 local function addword(msg, name)
     local hash = 'chat:'..msg.chat_id_..':badword'
     redis:hset(hash, name, 'newword')
-    return "`THis WOrd Has Been Added To Filter list` \n" *..name*
+    return "`THis WOrd Has Been Added To Filter list` \n" ..name
 end
 
 local function get_badword_hash(msg)
@@ -52,7 +52,7 @@ end
 local function clear_badword(msg, cmd_name)  
 	local hash = get_badword_hash(msg)
 	redis:hdel(hash, cmd_name)
-	return 'خدافظ'..cmd_name..'گودبای'
+	return "*Has Been Deleted*" ..cmd_name
 end
 
 local function pre_process(msg)
