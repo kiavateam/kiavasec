@@ -1,7 +1,7 @@
 local function addword(msg, name)
     local hash = 'chat:'..msg.chat_id_..':badword'
     redis:hset(hash, name, 'newword')
-    return "`THis WOrd Has Been Added To Filter list` \n" ..name
+    return "`THis WOrd Has Been Added To Filter list` \n" *..name*
 end
 
 local function get_badword_hash(msg)
