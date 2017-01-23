@@ -1,7 +1,7 @@
 local function addword(msg, name)
     local hash = 'chat:'..msg.chat_id_..':badword'
     redis:hset(hash, name, 'newword')
-    return "ع©ظ„ظ…ظ‡ ط¬ط¯غŒط¯ ط¨ظ‡ ظپغŒظ„طھط± ع©ظ„ظ…ط§طھ ط§ط¶ط§ظپظ‡ ط´ط¯\nًں”¹â‍• "..name
+    return "تست"..name
 end
 
 local function get_badword_hash(msg)
@@ -13,14 +13,14 @@ local function list_badwords(msg)
 	local result=''
 	if hash then
 		local names = redis:hkeys(hash)
-		local text = 'ًں“‹ظ„غŒط³طھ ع©ظ„ظ…ط§طھ ط؛غŒط±ظ…ط¬ط§ط² :\n\n'
+		local text = 'تست 2:\n\n'
 		for i=1, #names do
-			result = result..'ًں”¹ '..names[i]..'\n'
+			result = result..'سلام '..names[i]..'\n'
 		end
 		if #result>0 then
 			return text..result
 		else
-			return'â­•ï¸ڈظ„غŒط³طھ ع©ظ„ظ…ط§طھ ط؛غŒط±ظ…ط¬ط§ط² ط®ط§ظ„غŒ ظ…غŒط¨ط§ط´ط¯.â­•ï¸ڈ'
+			return'هلوووو'
 		end
 	end
 end
@@ -28,7 +28,7 @@ end
 local function clear_badwords(msg, var_name) 
 	local hash = get_badword_hash(msg)
 	redis:del(hash, var_name)
-	return 'â‌Œظ„غŒط³طھ ع©ظ„ظ…ط§طھ ط؛غŒط±ظ…ط¬ط§ط² ط­ط°ظپ ط´ط¯â‌Œ'
+	return 'بای بای'
 end
 
 local function list_badword2(msg, arg)
@@ -52,7 +52,7 @@ end
 local function clear_badword(msg, cmd_name)  
 	local hash = get_badword_hash(msg)
 	redis:hdel(hash, cmd_name)
-	return 'â‌Œع©ظ„ظ…ظ‡ ط؛غŒط±ظ…ط¬ط§ط² '..cmd_name..' ط­ط°ظپ ط´ط¯.'
+	return 'خدافظ'..cmd_name..'گودبای'
 end
 
 local function pre_process(msg)
