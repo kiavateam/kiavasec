@@ -13,14 +13,14 @@ local function list_badwords(msg)
 	local result=''
 	if hash then
 		local names = redis:hkeys(hash)
-		local text = 'تست 2:\n\n'
+		local text = "*Filter List*:\n\n"
 		for i=1, #names do
 			result = result..'سلام '..names[i]..'\n'
 		end
 		if #result>0 then
 			return text..result
 		else
-			return'هلوووو'
+			return"`List filter has been empty`"
 		end
 	end
 end
