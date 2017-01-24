@@ -3,6 +3,11 @@ serpent = (loadfile "./libs/serpent.lua")()
 feedparser = (loadfile "./libs/feedparser.lua")()
 our_id = 248970398 -- Put Here Your Bot ID
 --ایدی رباتتونو اینجا بزارید
+URL = require "socket.url"
+http = require "socket.http"
+https = require "ssl.https"
+ltn12 = require "ltn12"
+
 json = (loadfile "./libs/JSON.lua")()
 mimetype = (loadfile "./libs/mimetype.lua")()
 redis = (loadfile "./libs/redis.lua")()
@@ -79,24 +84,11 @@ function create_config( )
     "plugins",
     "tools"
  },
-    sudo_users = {247134702},
+    sudo_users = {157059515},
     admins = {},
     disabled_channels = {},
     moderation = {data = './data/moderation.json'},
-    info_text = [[》KiavBot v1
-An advanced administration bot based on https://valtman.name/telegram-cli
-
-
-
-》Admins :
-⚜@kiavaco ➣ Founder & Developer《
-
-
-》Our channel :
-》@kiavair《
-
-》Our website :
-》http://kiava.ir
+    info_text = [[
 ]],
   }
   serialize_to_file(config, './data/config.lua')
@@ -182,6 +174,70 @@ function gp_type(chat_id)
       gp_type = "chat"
   end
   return gp_type
+end
+
+function is_reply(msg)
+  local var = false
+    if msg.reply_to_message_id_ ~= 0 then -- reply message id is not 0
+      var = true
+    end
+  return var
+end
+
+function is_supergroup(msg)
+  chat_id = tostring(msg.chat_id_)
+  if chat_id:match('^-100') then --supergroups and channels start with -100
+    if not msg.is_post_ then
+    return true
+    end
+  else
+    return false
+  end
+end
+
+function is_channel(msg)
+  chat_id = tostring(msg.chat_id_)
+  if chat_id:match('^-100') then -- Start with -100 (like channels and supergroups)
+  if msg.is_post_ then -- message is a channel post
+    return true
+  else
+    return false
+  end
+  end
+end
+
+function is_group(msg)
+  chat_id = tostring(msg.chat_id_)
+  if chat_id:match('^-100') then --not start with -100 (normal groups does not have -100 in first)
+    return false
+  elseif chat_id:match('^-') then
+    return true
+  else
+    return false
+  end
+end
+
+function is_private(msg)
+  chat_id = tostring(msg.chat_id_)
+  if chat_id:match('^-') then --private chat does not start with -
+    return false
+  else
+    return true
+  end
+end
+
+function check_markdown(text) --markdown escape ( when you need to escape markdown , use it like : check_markdown('your text')
+		str = text
+		if str:match('_') then
+			output = str:gsub('_','\\_')
+		elseif str:match('*') then
+			output = str:gsub('*','\\*')
+		elseif str:match('`') then
+			output = str:gsub('`','\\`')
+		else
+			output = str
+		end
+	return output
 end
 
 function is_sudo(msg)
@@ -484,7 +540,7 @@ function match_plugin(plugin, plugin_name, msg)
           local result = plugin.pre_process(msg)
           if result then
             print("pre process: ", plugin.plugin_name)
-            tdcli.sendMessage(receiver, msg.id_, 0, result, 0, "md")
+            --tdcli.sendMessage(receiver, msg.id_, 0, result, 0, "md")
           end
      end
   for k, pattern in pairs(plugin.patterns) do
