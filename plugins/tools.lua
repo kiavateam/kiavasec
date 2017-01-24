@@ -1,4 +1,5 @@
 --Begin Tools.lua :)
+local SUDO = 247134702 -- put Your ID here! <===
 local function index_function(user_id)
   for k,v in pairs(_config.admins) do
     if user_id == v[1] then
@@ -81,10 +82,10 @@ if not tonumber(data.sender_user_id_) then return false end
 local function adminprom_cb(arg, data)
 local hash = "gp_lang:"..arg.chat_id
 local lang = redis:get(hash)
-if data.username_ and not data.username_:match("_") then
-user_name = '@'..data.username_
+if data.username_ then
+user_name = '@'..check_markdown(data.username_)
 else
-user_name = data.first_name_
+user_name = check_markdown(data.first_name_)
 end
 if is_admin1(tonumber(data.id_)) then
    if not lang then
@@ -111,10 +112,10 @@ local function admindem_cb(arg, data)
 local hash = "gp_lang:"..arg.chat_id
 local lang = redis:get(hash)
 	local nameid = index_function(tonumber(data.id_))
-if data.username_ and not data.username_:match("_") then
-user_name = '@'..data.username_
+if data.username_ then
+user_name = '@'..check_markdown(data.username_)
 else
-user_name = data.first_name_
+user_name = check_markdown(data.first_name_)
 end
 if not is_admin1(data.id_) then
    if not lang then
@@ -140,10 +141,10 @@ tdcli_function ({
 local function visudo_cb(arg, data)
 local hash = "gp_lang:"..arg.chat_id
 local lang = redis:get(hash)
-if data.username_ and not data.username_:match("_") then
-user_name = '@'..data.username_
+if data.username_ then
+user_name = '@'..check_markdown(data.username_)
 else
-user_name = data.first_name_
+user_name = check_markdown(data.first_name_)
 end
 if already_sudo(tonumber(data.id_)) then
   if not lang then
@@ -170,10 +171,10 @@ tdcli_function ({
 local function desudo_cb(arg, data)
 local hash = "gp_lang:"..arg.chat_id
 local lang = redis:get(hash)
-if data.username_ and not data.username_:match("_") then
-user_name = '@'..data.username_
+if data.username_ then
+user_name = '@'..check_markdown(data.username_)
 else
-user_name = data.first_name_
+user_name = check_markdown(data.first_name_)
 end
      if not already_sudo(data.id_) then
    if not lang then
@@ -202,10 +203,10 @@ local function action_by_username(arg, data)
 local hash = "gp_lang:"..arg.chat_id
 local lang = redis:get(hash)
     local cmd = arg.cmd
-if data.type_.user_.username_ and not data.type_.user_.username_:match("_") then
-user_name = '@'..data.type_.user_.username_
+if data.type_.user_.username_ then
+user_name = '@'..check_markdown(data.type_.user_.username_)
 else
-user_name = data.title_
+user_name = check_markdown(data.title_)
 end
 if not arg.username then return false end
     if cmd == "adminprom" then
@@ -281,10 +282,10 @@ local function action_by_id(arg, data)
 local hash = "gp_lang:"..arg.chat_id
 local lang = redis:get(hash)
     local cmd = arg.cmd
-if data.username_ and not data.username_:match("_") then
-user_name = '@'..data.username_
+if data.username_ then
+user_name = '@'..check_markdown(data.username_)
 else
-user_name = data.first_name_
+user_name = check_markdown(data.first_name_)
 end
 if not tonumber(arg.user_id) then return false end
     if cmd == "adminprom" then
@@ -359,7 +360,7 @@ end
 local function run(msg, matches)
 local hash = "gp_lang:"..msg.chat_id_
 local lang = redis:get(hash)
- if tonumber(msg.sender_user_id_) == 157059515 then --Put Your ID
+ if tonumber(msg.sender_user_id_) == SUDO then
 if matches[1] == "visudo" then
 if not matches[2] and tonumber(msg.reply_to_message_id_) ~= 0 then
     tdcli_function ({
