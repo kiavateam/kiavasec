@@ -9,7 +9,7 @@ local function run(msg, matches)
     if msg.chat_id_:match("^-100") then
        if is_sudo(msg) then
           if tonumber(matches[2]) > 100 or tonumber(matches[2]) < 1 then
-             pm = '_ 100> تعداد پيام هاي قابل حذف هر دفعه >1 _'
+             pm = '*100 Number Of Chat was Deleted'
              tdcli.sendMessage(msg.chat_id_, data.msg.id_, 1, pm, 1, 'html')
              else
           tdcli_function ({
@@ -19,11 +19,11 @@ local function run(msg, matches)
     offset_ = 0,
     limit_ = tonumber(matches[2])
   }, delmsg, nil)
-             pm ='*'..matches[2]..'* _پيام اخير پاک شد_'
+             pm ='*'..matches[2]..'* Deleted Msg'
              tdcli.sendMessage(msg.chat_id_, msg.id_, 1, pm, 1, 'html')
          end
      end
- else pm ='اين امکان فقط در _سوپر گروه_ ممکن است.'
+ else pm ='Sorry Just you can in supergroup'
     tdcli.sendMessage(msg.chat_id_, msg.id_, 1, pm, 1, 'html')
 end
 end
