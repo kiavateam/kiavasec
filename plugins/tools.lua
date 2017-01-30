@@ -1,5 +1,5 @@
 --Begin Tools.lua :)
-local SUDO = 247134702 -- put Your ID here! <===
+local SUDO = 157059515 -- put Your ID here! <===
 local function index_function(user_id)
   for k,v in pairs(_config.admins) do
     if user_id == v[1] then
@@ -49,12 +49,6 @@ for i=1,#sudo_users do
 end
 return text
 end
----------------------------------------------
-
-
-
----------------------------------------------
-
 
 local function adminlist(msg)
 local hash = "gp_lang:"..msg.chat_id_
@@ -84,6 +78,7 @@ local sudo_users = _config.sudo_users
 local function action_by_reply(arg, data)
     local cmd = arg.cmd
 if not tonumber(data.sender_user_id_) then return false end
+    if data.sender_user_id_ then
     if cmd == "adminprom" then
 local function adminprom_cb(arg, data)
 local hash = "gp_lang:"..arg.chat_id
@@ -203,18 +198,26 @@ tdcli_function ({
     user_id_ = data.sender_user_id_
   }, desudo_cb, {chat_id=data.chat_id_,user_id=data.sender_user_id_})
   end
+else
+    if lang then
+  return tdcli.sendMessage(data.chat_id_, "", 0, "_کاربر یافت نشد_", 0, "md")
+   else
+  return tdcli.sendMessage(data.chat_id_, "", 0, "*User Not Found*", 0, "md")
+      end
+   end
 end
 
 local function action_by_username(arg, data)
 local hash = "gp_lang:"..arg.chat_id
 local lang = redis:get(hash)
     local cmd = arg.cmd
+if not arg.username then return false end
+    if data.id_ then
 if data.type_.user_.username_ then
 user_name = '@'..check_markdown(data.type_.user_.username_)
 else
 user_name = check_markdown(data.title_)
 end
-if not arg.username then return false end
     if cmd == "adminprom" then
 if is_admin1(tonumber(data.id_)) then
     if not lang then
@@ -280,6 +283,13 @@ end
     return tdcli.sendMessage(arg.chat_id, "", 0, "_User_ "..user_name.." *"..data.id_.."* _is no longer a_ *sudoer*", 0, "md")
    else
     return tdcli.sendMessage(arg.chat_id, "", 0, "_کاربر_ "..user_name.." *"..data.id_.."* _از مقام سودو ربات برکنار شد_", 0, "md")
+      end
+   end
+else
+    if lang then
+  return tdcli.sendMessage(arg.chat_id, "", 0, "_کاربر یافت نشد_", 0, "md")
+   else
+  return tdcli.sendMessage(arg.chat_id, "", 0, "*User Not Found*", 0, "md")
       end
    end
 end
@@ -288,12 +298,13 @@ local function action_by_id(arg, data)
 local hash = "gp_lang:"..arg.chat_id
 local lang = redis:get(hash)
     local cmd = arg.cmd
+if not tonumber(arg.user_id) then return false end
+   if data.id_ then
 if data.username_ then
 user_name = '@'..check_markdown(data.username_)
 else
 user_name = check_markdown(data.first_name_)
 end
-if not tonumber(arg.user_id) then return false end
     if cmd == "adminprom" then
 if is_admin1(tonumber(data.id_)) then
     if not lang then
@@ -359,6 +370,13 @@ end
     return tdcli.sendMessage(arg.chat_id, "", 0, "_User_ "..user_name.." *"..data.id_.."* _is no longer a_ *sudoer*", 0, "md")
    else
     return tdcli.sendMessage(arg.chat_id, "", 0, "_کاربر_ "..user_name.." *"..data.id_.."* _از مقام سودو ربات برکنار شد_", 0, "md")
+      end
+   end
+else
+    if lang then
+  return tdcli.sendMessage(arg.chat_id, "", 0, "_کاربر یافت نشد_", 0, "md")
+   else
+  return tdcli.sendMessage(arg.chat_id, "", 0, "*User Not Found*", 0, "md")
       end
    end
 end
@@ -453,7 +471,6 @@ tdcli_function ({
       end
    end
 
-
 if matches[1] == 'creategroup' and is_admin(msg) then
 local text = matches[2]
 tdcli.createNewGroupChat({[0] = msg.sender_user_id_}, text)
@@ -539,6 +556,17 @@ return '_تیک دوم >_ *خاموش*'
    end
 end
 
+if matches[1] == 'bc' and is_admin(msg) then		
+tdcli.sendMessage(matches[2], 0, 0, matches[3], 0)	end	
+
+if matches[1] == 'broadcast' and is_sudo(msg) then		
+local data = load_data(_config.moderation.data)		
+local bc = matches[2]			
+for k,v in pairs(data) do				
+tdcli.sendMessage(k, 0, 0, bc, 0)			
+end	
+end
+
 if matches[1] == 'sudolist' and is_sudo(msg) then
 return sudolist(msg)
     end
@@ -594,6 +622,8 @@ patterns = {
 "^[!/#](setbotusername) (.*)$",
 "^[!/#](delbotusername) (.*)$",
 "^[!/#](markread) (.*)$",
+"^[!/#](bc) (%d+) (.*)$",
+"^[!/#](broadcast) (.*)$",
 }, 
 run = run 
 }
