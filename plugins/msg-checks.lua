@@ -1,4 +1,4 @@
-
+--Begin msg_checks.lua By @SoLiD
 local TIME_CHECK = 2
 local function pre_process(msg)
 local data = load_data(_config.moderation.data)
@@ -114,6 +114,11 @@ end
 	else
 		lock_tag = 'no'
 	end
+	if settings.lock_arabic then
+		lock_arabic = settings.lock_arabic
+	else
+		lock_arabic = 'no'
+	end
 	if settings.lock_mention then
 		lock_mention = settings.lock_mention
 	else
@@ -161,6 +166,23 @@ kick_user(user, chat)
        end
     end
  end
+if lock_arabic == "yes" then
+		local is_arabic_caption = msg.content_.caption_:match("[\216-\219][\128-\191]")
+if is_arabic_caption then
+ if is_channel then
+ del_msg(msg.chat_id_, tonumber(msg.id_))
+  elseif is_chat then
+kick_user(user, chat)
+       end
+    end
+ end
+if is_filter(msg, msg.content_.caption_) then
+ if is_channel then
+ del_msg(msg.chat_id_, tonumber(msg.id_))
+  elseif is_chat then
+kick_user(user, chat)
+      end
+    end
 if lock_tag == "yes" then
 local tag_caption = msg.content_.caption_:match("@") or msg.content_.caption_:match("#")
 if tag_caption then
@@ -284,6 +306,21 @@ kick_user(user, chat)
 end
 local tag_msg = msg.text:match("@") or msg.text:match("#")
 if tag_msg and lock_tag == "yes" then
+ if is_channel then
+ del_msg(msg.chat_id_, tonumber(msg.id_))
+  elseif is_chat then
+kick_user(user, chat)
+   end
+end
+if is_filter(msg, msg.text) then
+ if is_channel then
+ del_msg(msg.chat_id_, tonumber(msg.id_))
+  elseif is_chat then
+kick_user(user, chat)
+      end
+    end
+local arabic_msg = msg.text:match("[\216-\219][\128-\191]")
+if arabic_msg and lock_arabic == "yes" then
  if is_channel then
  del_msg(msg.chat_id_, tonumber(msg.id_))
   elseif is_chat then
