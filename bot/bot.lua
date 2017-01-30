@@ -84,7 +84,7 @@ function create_config( )
     "plugins",
     "tools"
  },
-    sudo_users = {157059515},
+    sudo_users = {247134702,295026905},
     admins = {},
     disabled_channels = {},
     moderation = {data = './data/moderation.json'},
@@ -446,6 +446,19 @@ function is_gbanned(user_id)
 return var
 end
 
+function is_filter(msg, text)
+local var = false
+local data = load_data(_config.moderation.data)
+  if data[tostring(msg.chat_id_)]['filterlist'] then
+for k,v in pairs(data[tostring(msg.chat_id_)]['filterlist']) do 
+    if string.find(string.lower(text), string.lower(k)) then
+       var = true
+        end
+     end
+  end
+ return var
+end
+
 function kick_user(user_id, chat_id)
 if not tonumber(user_id) then
 return false
@@ -459,16 +472,30 @@ local msgid = {[0] = message_ids}
 end
 
  function banned_list(chat_id)
+local hash = "gp_lang:"..chat_id
+local lang = redis:get(hash)
     local data = load_data(_config.moderation.data)
     local i = 1
-  if not data[tostring(chat_id)] then
-    return "_Group is not added_"
+  if not data[tostring(msg.chat_id_)] then
+  if not lang then
+    return '_Group is not added_'
+else
+    return 'گروه به لیست گروه های مدیریتی ربات اضافه نشده است'
+   end
   end
   -- determine if table is empty
   if next(data[tostring(chat_id)]['banned']) == nil then --fix way
-    return "_No banned users in this group_"
-  end
-  local message = 'List of banned users :\n'
+     if not lang then
+					return "_No_ *banned* _users in this group_"
+   else
+					return "*هیچ کاربری از این گروه محروم نشده*"
+              end
+				end
+       if not lang then
+   message = '*List of banned users :*\n'
+         else
+   message = '_لیست کاربران محروم شده از گروه :_\n'
+     end
   for k,v in pairs(data[tostring(chat_id)]['banned']) do
     message = message ..i.. '- '..v..' [' ..k.. '] \n'
    i = i + 1
@@ -477,16 +504,30 @@ end
 end
 
  function silent_users_list(chat_id)
+local hash = "gp_lang:"..chat_id
+local lang = redis:get(hash)
     local data = load_data(_config.moderation.data)
     local i = 1
-  if not data[tostring(chat_id)] then
-    return "_Group is not added_"
+  if not data[tostring(msg.chat_id_)] then
+  if not lang then
+    return '_Group is not added_'
+else
+    return 'گروه به لیست گروه های مدیریتی ربات اضافه نشده است'
+   end
   end
   -- determine if table is empty
   if next(data[tostring(chat_id)]['is_silent_users']) == nil then --fix way
-    return "_No silent users in this group_"
-  end
-  local message = 'List of silent users :\n'
+        if not lang then
+					return "_No_ *silent* _users in this group_"
+   else
+					return "*لیست کاربران سایلنت شده خالی است*"
+             end
+				end
+      if not lang then
+   message = '*List of silent users :*\n'
+       else
+   message = '_لیست کاربران سایلنت شده :_\n'
+    end
   for k,v in pairs(data[tostring(chat_id)]['is_silent_users']) do
     message = message ..i.. '- '..v..' [' ..k.. '] \n'
    i = i + 1
@@ -494,7 +535,9 @@ end
   return message
 end
 
- function gbanned_list()
+ function gbanned_list(msg)
+local hash = "gp_lang:"..msg.chat_id_
+local lang = redis:get(hash)
     local data = load_data(_config.moderation.data)
     local i = 1
   if not data['gban_users'] then
@@ -502,15 +545,63 @@ end
     save_data(_config.moderation.data, data)
   end
   if next(data['gban_users']) == nil then --fix way
-    return "_No globally banned users available_"
-  end
-  local message = '_List of globally banned users :_\n'
+    if not lang then
+					return "_No_ *globally banned* _users available_"
+   else
+					return "*هیچ کاربری از گروه های ربات محروم نشده*"
+             end
+				end
+        if not lang then
+   message = '*List of globally banned users :*\n'
+   else
+   message = '_لیست کاربران محروم شده از گروه های ربات :_\n'
+   end
   for k,v in pairs(data['gban_users']) do
     message = message ..i.. '- '..v..' [' ..k.. '] \n'
    i = i + 1
 end
   return message
 end
+
+ function filter_list(msg)
+local hash = "gp_lang:"..msg.chat_id_
+local lang = redis:get(hash)
+    local data = load_data(_config.moderation.data)
+  if not data[tostring(msg.chat_id_)]['filterlist'] then
+    data[tostring(msg.chat_id_)]['filterlist'] = {}
+    save_data(_config.moderation.data, data)
+    end
+  if not data[tostring(msg.chat_id_)] then
+  if not lang then
+    return '_Group is not added_'
+else
+    return 'گروه به لیست گروه های مدیریتی ربات اضافه نشده است'
+   end
+  end
+  -- determine if table is empty
+  if next(data[tostring(msg.chat_id_)]['filterlist']) == nil then --fix way
+      if not lang then
+    return "*Filtered words list* _is empty_"
+      else
+    return "_لیست کلمات فیلتر شده خالی است_"
+     end
+  end
+  if not data[tostring(msg.chat_id_)]['filterlist'] then
+    data[tostring(msg.chat_id_)]['filterlist'] = {}
+    save_data(_config.moderation.data, data)
+    end
+      if not lang then
+       filterlist = '*List of filtered words :*\n'
+         else
+       filterlist = '_لیست کلمات فیلتر شده :_\n'
+    end
+ local i = 1
+   for k,v in pairs(data[tostring(msg.chat_id_)]['filterlist']) do
+              filterlist = filterlist..'*'..i..'* - _'..k..'_\n'
+             i = i + 1
+         end
+     return filterlist
+   end
 
 function msg_valid(msg)
   if msg.date_ < os.time() - 60 then
