@@ -11,7 +11,7 @@ local lang = redis:get(hash)
 kick_user(data.id_, arg.chat_id)
 end
 end
-if check_markdown(data.username_) then
+if data.username_ then
 user_name = '@'..check_markdown(data.username_)
 else
 user_name = check_markdown(data.first_name_)
@@ -62,6 +62,7 @@ local hash = "gp_lang:"..data.chat_id_
 local lang = redis:get(hash)
   local cmd = arg.cmd
 if not tonumber(data.sender_user_id_) then return false end
+if data.sender_user_id_ then
   if cmd == "ban" then
 local function ban_cb(arg, data)
 local hash = "gp_lang:"..arg.chat_id
@@ -300,18 +301,26 @@ tdcli.deleteMessagesFromUser(data.chat_id_, data.sender_user_id_, dl_cb, nil)
        end
     end
   end
+else
+    if lang then
+  return tdcli.sendMessage(data.chat_id_, "", 0, "_کاربر یافت نشد_", 0, "md")
+   else
+  return tdcli.sendMessage(data.chat_id_, "", 0, "*User Not Found*", 0, "md")
+      end
+   end
 end
 local function action_by_username(arg, data)
 local hash = "gp_lang:"..arg.chat_id
 local lang = redis:get(hash)
   local cmd = arg.cmd
     local administration = load_data(_config.moderation.data)
+if not arg.username then return false end
+    if data.id_ then
 if data.type_.user_.username_ then
 user_name = '@'..check_markdown(data.type_.user_.username_)
 else
 user_name = check_markdown(data.title_)
 end
-if not arg.username then return false end
   if cmd == "ban" then
    if is_mod1(arg.chat_id, data.id_) then
   if not lang then
@@ -466,6 +475,13 @@ tdcli.deleteMessagesFromUser(arg.chat_id, data.id_, dl_cb, nil)
        end
     end
   end
+else
+    if lang then
+  return tdcli.sendMessage(arg.chat_id, "", 0, "_کاربر یافت نشد_", 0, "md")
+   else
+  return tdcli.sendMessage(arg.chat_id, "", 0, "*User Not Found*", 0, "md")
+      end
+   end
 end
 local function run(msg, matches)
 local hash = "gp_lang:"..msg.chat_id_
@@ -798,7 +814,7 @@ data[tostring(chat)]['is_silent_users'][tostring(matches[2])] = nil
 			end
      end
 if matches[1] == "gbanlist" and is_admin(msg) then
-  return gbanned_list()
+  return gbanned_list(msg)
  end
 if matches[1] == "silentlist" and is_mod(msg) then
   return silent_users_list(chat)
